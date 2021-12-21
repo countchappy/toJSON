@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "toJSON", "toJSON\toJSON.csproj", "{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Server|Any CPU = Debug Server|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Debug Server|Any CPU.ActiveCfg = Server Debug|Any CPU
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Debug Server|Any CPU.Build.0 = Server Debug|Any CPU
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1C1BAC8-CB0A-47F7-81CF-3210D9150F4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A71B1D1-071F-45F8-AEF4-46CA662FC5FA}
+	EndGlobalSection
+EndGlobal

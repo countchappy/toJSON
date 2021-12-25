@@ -11,14 +11,18 @@ namespace toJSON.Classes.Output.Templates.JSON
     {
         public List<Node> Children { get; private set; } = new List<Node>();
 
-        public override bool IsFill { get { return false; }
+        public override bool IsFill { 
+            get { 
+                return false; 
+            }
             set
             {
                 if (!value)
                 {
                     Children.ToList().ForEach(child =>
                     {
-                        child.IsFill = false;
+                        if (child is KeyValuePairNode && ((KeyValuePairNode)child).IsFill) Children.Remove(child);
+                        else child.IsFill = false;
                     });
                 }
             }
@@ -39,9 +43,9 @@ namespace toJSON.Classes.Output.Templates.JSON
                 case JTokenType.String:
                     child = new KeyValuePairNode(token, this);
                     break;
-                case JTokenType.Object:
+                /*case JTokenType.Object:
                     child = new GroupObjectNode(token, this);
-                    break;
+                    break;*/
                 case JTokenType.Array:
                     var jArray = (JArray)token.Value;
                     var firstChild = jArray.Children().FirstOrDefault();
@@ -92,26 +96,30 @@ namespace toJSON.Classes.Output.Templates.JSON
 
         public void ChildrenFull(object sender, BubbleFullEventArgs args)
         {
-            if (sender is KeyValuePairNode && ((KeyValuePairNode)sender).IsFill)
+            Node s = sender as Node;
+            if (s is KeyValuePairNode && s.IsFill)
             {
-                ClearFill();
-                KeyValuePairNode pair = (KeyValuePairNode)sender;
+                s.IsFill = false;
+                //ClearFill();
+                KeyValuePairNode pair = (KeyValuePairNode)s;
                 BirthNewChild((JProperty)pair.Token);
-            }
-            else if (sender is GroupObjectNode)
+            }/*
+            else if (s is GroupObjectNode)
             {
-                ClearFill();
-                GroupObjectNode groupObject = (GroupObjectNode)sender;
+                IsFill = false;
+                //ClearFill();
+                GroupObjectNode groupObject = (GroupObjectNode)s;
                 BirthNewChild((JProperty)groupObject.Token);
                 if (args != null)
                     MapCell(args.Column, args.Value);
-            }
+            }*/
             else
             {
-                Full(sender, args);
+                Full(s, args);
             }
         }
 
+        /*
         public override void ClearFill()
         {
             foreach(var child in Children.ToList())
@@ -125,5 +133,6 @@ namespace toJSON.Classes.Output.Templates.JSON
                 }
             }
         }
+        */
     }
 }

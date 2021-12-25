@@ -10,21 +10,72 @@ namespace toJSON.Classes.Output.Templates.JSON
 {
     class NodeRegex
     {
-        public static Regex match_token = new Regex(@"(?:\${(int|bool|float|datetime)?(\[(.*)\])?\(?((\w*)[-=](\d+|\[(.*)\]|\${I}))\)?})");
+        public static DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        public static Regex match_token = new Regex(@"(?:\${(int|bool|float|datetime|epochmillis)?(\[(.*)\])?\(?((\w*)[-=](\d+|\[(.*)\]|\${I}))\)?})");
         public static Regex match_fill = new Regex(@"(?:\$\{I\})");
         public static Regex match_digit = new Regex(@"(?:\d+)");
 
-        public static Type MapCast(string castKey)
+        public static ValueType MapCast(string castKey)
         {
             switch (castKey)
             {
-                case "int": return typeof(int);
-                case "float": return typeof(float);
-                case "datetime": return typeof(DateTime);
-                case "bool": return typeof(bool);
-                default: return typeof(string);
+                case "int": return ValueType.Integer;
+                case "float": return ValueType.Float;
+                case "datetime": return ValueType.DateTime;
+                case "bool": return ValueType.Boolean;
+                case "epochmillis": return ValueType.EpochMillis;
+                default: return ValueType.String;
             }
         }
+        
+        public static object CastValue(ValueType valueType, string value, string booleanComparitor)
+        {
+            object returnValue = null;
+
+            switch (valueType)
+            {
+                case ValueType.Integer:
+                    int integerValue;
+                    if (int.TryParse(value, out integerValue))
+                        returnValue = integerValue;
+                    break;
+                case ValueType.Float:
+                    float floatValue;
+                    if (float.TryParse(value, out floatValue))
+                        returnValue = floatValue;
+                    break;
+                case ValueType.Boolean:
+                    returnValue = value.Equals(booleanComparitor);
+                    break;
+                case ValueType.DateTime:
+                    DateTime dateTimeValue;
+                    if (DateTime.TryParse(value, out dateTimeValue))
+                        returnValue = dateTimeValue;
+                    break;
+                case ValueType.EpochMillis:
+                    DateTime epochMillisValue;
+                    if (DateTime.TryParse(value, out epochMillisValue))
+                        returnValue = epochMillisValue.ToUniversalTime().Subtract(NodeRegex.UnixEpoch).TotalMilliseconds;
+                    break;
+                default:
+                    if (!string.IsNullOrEmpty(value))
+                        returnValue = value;
+                    break;
+            }
+
+            return returnValue;
+        }
+    }
+
+    enum ValueType
+    {
+        Integer,
+        Float,
+        DateTime,
+        Boolean,
+        EpochMillis,
+        String
     }
 
     abstract class Node
@@ -39,8 +90,6 @@ namespace toJSON.Classes.Output.Templates.JSON
         public abstract bool MapCell(int Column, string Value);
 
         public abstract JToken GetJToken();
-
-        public abstract void ClearFill();
 
         public override string ToString()
         {

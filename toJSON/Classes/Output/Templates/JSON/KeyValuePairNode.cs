@@ -21,7 +21,7 @@ namespace toJSON.Classes.Output.Templates.JSON
         private bool valueSet { get; set; }
         private string boolCompare { get; set; }
 
-        public Type ValueType { get; private set; } = typeof(string);
+        public ValueType ValueType { get; set; } = ValueType.String;
 
         public KeyValuePairNode(JProperty token, Node parent) : base(token, parent)
         {
@@ -53,38 +53,14 @@ namespace toJSON.Classes.Output.Templates.JSON
                 if (!string.IsNullOrEmpty(cast))
                 {
                     ValueType = NodeRegex.MapCast(valueMatches.Groups[1].ToString().ToLower());
-                    if (ValueType == typeof(bool)) boolCompare = valueMatches.Groups[3].ToString();
+                    if (ValueType == ValueType.Boolean) boolCompare = valueMatches.Groups[3].ToString();
                 }
             }
         }
 
         public override JToken GetJToken()
         {
-            JProperty result = new JProperty(Key, null);
-            if (ValueType == typeof(int))
-            {
-                int value;
-                if (int.TryParse(Value, out value)) result = new JProperty(Key, value);
-            }
-            else if (ValueType == typeof(bool))
-            {
-                bool value = false;
-                if (Value.Equals(boolCompare)) value = true;
-                result = new JProperty(Key, value);
-            }
-            else if (ValueType == typeof(float))
-            {
-                float value;
-                if (float.TryParse(Value, out value)) result = new JProperty(Key, value);
-            }
-            else if (ValueType == typeof(DateTime))
-            {
-                DateTime value;
-                if (DateTime.TryParse(Value, out value)) result = new JProperty(Key, value);
-            } else if (!string.IsNullOrEmpty(Value)) {
-                result = new JProperty(Key, Value);
-            }
-            return result;
+            return new JProperty(Key, NodeRegex.CastValue(ValueType, Value, boolCompare));
         }
 
         public override void MapHeader(int Column, string Header)
@@ -97,8 +73,6 @@ namespace toJSON.Classes.Output.Templates.JSON
         {
             if (IsFill)
             {
-                Full(this, null);
-
                 ColumnIndex = Column;
                 this.Value = Value;
                 valueSet = true;
@@ -113,6 +87,8 @@ namespace toJSON.Classes.Output.Templates.JSON
                     }
                 }
 
+                Full(this, null);
+
                 return true;
             }
             else
@@ -122,7 +98,6 @@ namespace toJSON.Classes.Output.Templates.JSON
                 {
                     if (!this.Value.Equals(Value))
                     {
-                        IsFill = false;
                         Full(this, new BubbleFullEventArgs(Column, Value));
                     }
                 }
@@ -135,9 +110,11 @@ namespace toJSON.Classes.Output.Templates.JSON
             }
         }
 
+        /*
         public override void ClearFill()
         {
             return;
         }
+        */
     }
 }

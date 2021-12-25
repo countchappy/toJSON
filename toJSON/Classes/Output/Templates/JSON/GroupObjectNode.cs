@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace toJSON.Classes.Output.Templates.JSON
+namespace toJSON.Classes.Output.Templates.JSON.staging
 {
     internal class GroupObjectNode : Node
     {
@@ -80,10 +80,12 @@ namespace toJSON.Classes.Output.Templates.JSON
             Child.MapHeader(Column, Header);
         }
         
+        /*
         // Might need to think about how this will delete
         public override void ClearFill()
         {
             Child.ClearFill();
         }
+        */
     }
 }

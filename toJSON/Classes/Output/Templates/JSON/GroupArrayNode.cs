@@ -12,6 +12,8 @@ namespace toJSON.Classes.Output.Templates.JSON
         public List<Node> Children { get; private set; } = new List<Node>();
         public JToken ChildTemplate { get; private set; }
 
+        public int ActiveChild { get; set; }
+
         public string Key { get; private set; }
 
         public override bool IsFill
@@ -63,9 +65,8 @@ namespace toJSON.Classes.Output.Templates.JSON
 
         public override bool MapCell(int Column, string Value)
         {
-            foreach (var child in Children.ToList())
-                if (child.MapCell(Column, Value))
-                    return true;
+            if (Children.Count > ActiveChild)
+                Children[ActiveChild].MapCell(Column, Value);
 
             return false;
         }
@@ -82,6 +83,7 @@ namespace toJSON.Classes.Output.Templates.JSON
 
         private void ChildrenFull(object sender, BubbleFullEventArgs args)
         {
+            ActiveChild++;
             IsFill = false;
             var c = BirthChild();
             if (args != null) c.MapCell(args.Column, args.Value);
@@ -95,6 +97,7 @@ namespace toJSON.Classes.Output.Templates.JSON
             return child;
         }
 
+        /*
         public override void ClearFill()
         {
             foreach (var child in Children)
@@ -102,5 +105,6 @@ namespace toJSON.Classes.Output.Templates.JSON
                 if (child.IsFill) Children.Remove(child);
             }
         }
+        */
     }
 }

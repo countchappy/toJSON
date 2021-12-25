@@ -11,10 +11,9 @@ namespace toJSON.Classes.Output.Templates.JSON
     {
         public string Key { get; private set; }
         public List<string> Children { get; private set; } = new List<string>();
-        public Type ValueType = typeof(string);
+        public ValueType ValueType = ValueType.String;
 
         private List<int> filledColumns = new List<int>();
-
 
         private string boolCompare = null;
 
@@ -28,7 +27,7 @@ namespace toJSON.Classes.Output.Templates.JSON
                 if (cMatches.Groups.Count > 0)
                 {
                     ValueType = NodeRegex.MapCast(cMatches.Groups[1].ToString().ToLower());
-                    if (ValueType == typeof(bool)) boolCompare = cMatches.Groups[3].ToString();
+                    if (ValueType == ValueType.Boolean) boolCompare = cMatches.Groups[3].ToString();
                 }
                 IsFill = true;
                 Key = token.Name;
@@ -40,7 +39,7 @@ namespace toJSON.Classes.Output.Templates.JSON
         public override JToken GetJToken()
         {
             var jArray = new JArray();
-            foreach(var item in Children) jArray.Add(item);
+            foreach(var item in Children) jArray.Add(NodeRegex.CastValue(ValueType, item, boolCompare));
             return new JProperty(Key, jArray);
         }
 
@@ -65,6 +64,7 @@ namespace toJSON.Classes.Output.Templates.JSON
             return;
         }
 
+        /*
         public override void ClearFill()
         {
             foreach(var item in Children)
@@ -72,5 +72,6 @@ namespace toJSON.Classes.Output.Templates.JSON
                 
             }
         }
+        */
     }
 }
